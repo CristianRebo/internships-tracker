@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Internships Tracker</title>
+<style>
+:root{
+  --green:#4caf82; --green-dark:#2f543d; --green-light:#1e2c24;
+  --bg:#0f1512; --card:#161d18; --border:#2a3830; --text:#e9f0ea; --muted:#93a396;
+  --ok:#3ecf8e; --warn:#e8b95a; --bad:#f07084; --info:#6ea8ff; --purple:#b195f5; --teal:#43d6c1;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,-apple-system,sans-serif;min-height:100vh;padding-bottom:48px}
+.topbar{background:linear-gradient(100deg,#1d3226,#2f543d);color:#fff;padding:26px 28px 22px;margin-bottom:22px}
+.topbar .inner,.wrap{max-width:1240px;margin:0 auto}
+.topbar h1{font-size:24px;font-weight:700}
+.greet{font-size:13.5px;opacity:.92;margin-bottom:6px}
+.subline{font-size:13px;opacity:.85;margin-top:6px}
+.wrap{padding:0 20px}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.stats,.controls,.chips,#tableWrap,.contacts,.section-t,.btnrow{animation:fadeUp .45s ease both}
+.btnrow{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
+button{background:var(--card);border:1px solid var(--border);color:var(--text);padding:8px 14px;border-radius:8px;cursor:pointer;font-size:13px;transition:.15s}
+button:hover{border-color:var(--green);box-shadow:0 2px 8px rgba(61,107,79,.15)}
+button.primary{background:var(--green);border-color:var(--green);color:#0f1512;font-weight:600}
+button.danger{color:var(--bad)}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-bottom:18px}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 14px;text-align:center}
+.stat .n{font-size:24px;font-weight:800;color:var(--c,var(--text))}
+.stat .l{color:var(--muted);font-size:11px;margin-top:2px;text-transform:uppercase;letter-spacing:.5px}
+.controls{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+input,select,textarea{background:var(--card);border:1px solid var(--border);color:var(--text);padding:9px 12px;border-radius:8px;font-size:13px;outline:none}
+input:focus,select:focus,textarea:focus{border-color:var(--green)}
+#search{flex:1;min-width:220px}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.chip{padding:6px 12px;border-radius:16px;border:1px solid var(--border);background:var(--card);color:var(--muted);font-size:12px;cursor:pointer;user-select:none}
+.chip.on{background:var(--green);color:#0f1512;border-color:var(--green)}
+.chip b{font-weight:700}
+table{width:100%;border-collapse:collapse;background:var(--card);border-radius:12px;overflow:hidden;font-size:13px;border:1px solid var(--border)}
+th{background:#24382d;color:#cfe8d8;text-align:left;padding:11px 12px;font-size:11.5px;text-transform:uppercase;letter-spacing:.5px;cursor:pointer;white-space:nowrap}
+td{padding:10px 12px;border-top:1px solid var(--border);vertical-align:middle}
+tr.row:nth-child(even) td{background:#1a221c}
+tr.row:hover td{background:var(--green-light);cursor:pointer}
+.co-cell{display:flex;align-items:center;gap:10px}
+.logo{width:30px;height:30px;border-radius:8px;flex:none;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:11.5px;color:#fff;background:var(--lc,var(--green));overflow:hidden}
+.logo img{width:100%;height:100%;object-fit:contain;background:#fff;padding:2px}
+.co{font-weight:600}
+.role{color:var(--muted);font-size:12px;margin-top:1px;max-width:330px}
+.badge{display:inline-block;padding:4px 10px;border-radius:12px;font-size:11px;font-weight:600;white-space:nowrap}
+.b-Accepted{background:rgba(62,207,142,.14);color:var(--ok)}
+.b-Interview{background:rgba(110,168,255,.14);color:var(--info)}
+.b-Assessment{background:rgba(67,214,193,.13);color:var(--teal)}
+.b-Waiting{background:rgba(232,185,90,.13);color:var(--warn)}
+.b-ToApply{background:rgba(177,149,245,.14);color:var(--purple)}
+.b-Rejected{background:rgba(240,112,132,.13);color:var(--bad)}
+.b-Networking{background:rgba(240,140,190,.13);color:#f08cbe}
+.b-Verify{background:rgba(255,150,80,.14);color:#ff9d55}
+.b-Closed{background:rgba(150,165,155,.13);color:#9aa8a0}
+a.lk{color:#6fd3a5;font-weight:600;text-decoration:none}
+a.lk:hover{text-decoration:underline}
+.cycle-tag{font-size:10.5px;border:1px solid var(--border);border-radius:6px;padding:2px 6px;color:var(--muted)}
+.cm{color:var(--muted);font-size:12px;max-width:260px}
+.dates{font-size:12px;color:var(--warn);font-weight:600}
+.section-t{font-size:16px;font-weight:700;margin:26px 0 12px}
+.contacts{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:12px}
+.card{background:var(--card);border:1px solid var(--border);border-left:3px solid var(--green);border-radius:10px;padding:13px}
+.card .nm{font-weight:700}.card .rl{color:#6fd3a5;font-size:12px;margin:2px 0}.card .st{font-size:12px;color:var(--muted);line-height:1.5}
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:10;align-items:center;justify-content:center}
+.overlay.show{display:flex}
+.modal{background:var(--card);border-radius:14px;padding:22px;width:min(560px,94vw);max-height:90vh;overflow:auto;box-shadow:0 18px 50px rgba(0,0,0,.25)}
+.modal h3{margin-bottom:14px}
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.fgrid .full{grid-column:1/3}
+.fld label{display:block;font-size:11px;color:var(--muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:.4px}
+.fld input,.fld select,.fld textarea{width:100%}
+.modal .actions{display:flex;justify-content:space-between;margin-top:16px}
+.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:var(--green);color:#0f1512;padding:10px 20px;border-radius:10px;font-size:13px;z-index:20;display:none;box-shadow:0 6px 20px rgba(61,107,79,.4)}
+@media(max-width:760px){.fgrid{grid-template-columns:1fr}.fgrid .full{grid-column:1}.cm,.role{max-width:none}}
+</style>
+</head>
+<body>
+
+<div class="topbar"><div class="inner">
+  <div class="greet" id="greet"></div>
+  <h1>📗 Internships Tracker</h1>
+  <div class="subline" id="subline"></div>
+</div></div>
+
+<div class="wrap">
+
+<div class="btnrow">
+  <button class="primary" onclick="openModal()">+ Add application</button>
+  <button onclick="exportJSON()">Export JSON</button>
+  <button onclick="exportCSV()">Export CSV</button>
+  <button onclick="document.getElementById('importFile').click()">Import JSON</button>
+  <input type="file" id="importFile" accept=".json" style="display:none" onchange="importJSON(event)">
+  <button class="danger" onclick="resetData()">Reset</button>
+</div>
+
+<div class="stats" id="stats"></div>
+
+<div class="controls">
+  <input type="text" id="search" placeholder="Search company, role, location, comments…" oninput="render()">
+  <select id="cycleF" onchange="render()">
+    <option value="">All cycles</option><option value="2027">2027 (active)</option><option value="2026">2026</option>
+  </select>
+</div>
+<div class="chips" id="chips"></div>
+
+<div id="tableWrap">
+<table>
+  <thead><tr>
+    <th onclick="sortBy('company')">Company &amp; Job</th>
+    <th onclick="sortBy('location')">Location</th>
+    <th onclick="sortBy('cycle')">Cycle</th>
+    <th onclick="sortBy('status')">Status</th>
+    <th onclick="sortBy('dates')">Dates / Assessment</th>
+    <th>Link</th>
+    <th>Comments</th>
+  </tr></thead>
+  <tbody id="tbody"></tbody>
+</table>
+</div>
+
+<div id="contactsSection">
+  <div class="section-t">Contacts &amp; referrals</div>
+  <div class="contacts" id="contacts"></div>
+</div>
+
+</div>
+
+<div class="overlay" id="overlay" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <h3 id="mTitle">Add application</h3>
+    <div class="fgrid">
+      <div class="fld"><label>Company</label><input id="f_company"></div>
+      <div class="fld"><label>Role / programme</label><input id="f_role"></div>
+      <div class="fld"><label>Location</label><input id="f_location"></div>
+      <div class="fld"><label>Cycle</label><select id="f_cycle"><option>2027</option><option>2026</option><option>2028</option></select></div>
+      <div class="fld"><label>Status</label><select id="f_status">
+        <option>To Apply</option><option>Waiting</option><option>Assessment</option><option>Interview</option><option>Accepted</option><option>Verify</option><option>Rejected</option><option>Closed</option><option>Networking</option>
+      </select></div>
+      <div class="fld"><label>Dates / assessment deadline</label><input id="f_dates" placeholder="e.g. OA by 20 Nov"></div>
+      <div class="fld full"><label>Application link</label><input id="f_link" placeholder="https://…"></div>
+      <div class="fld"><label>Company website (for logo)</label><input id="f_domain" placeholder="e.g. jpmorgan.com"></div>
+      <div class="fld"><label></label></div>
+      <div class="fld full"><label>Comments</label><textarea id="f_comments" rows="3"></textarea></div>
+    </div>
+    <div class="actions">
+      <button class="danger" id="mDelete" onclick="deleteRow()" style="display:none">Delete</button>
+      <div style="display:flex;gap:8px">
+        <button onclick="closeModal()">Cancel</button>
+        <button class="primary" onclick="saveRow()">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const SEED = [{"company": "Goldman Sachs", "role": "Summer Analyst — Global Markets", "location": "London", "cycle": "2027", "status": "Waiting", "dates": "Applied 10 Jul", "link": "https://www.goldmansachs.com/careers/", "domain": "goldmansachs.com", "comments": "Example row — click to edit or delete."}, {"company": "McKinsey & Company", "role": "Summer Business Analyst", "location": "Madrid", "cycle": "2027", "status": "Assessment", "dates": "OA by 30 Jul", "link": "https://www.mckinsey.com/careers", "domain": "mckinsey.com", "comments": "Example row."}, {"company": "Jane Street", "role": "Quant Trading Internship", "location": "London", "cycle": "2027", "status": "To Apply", "dates": "", "link": "https://www.janestreet.com/join-jane-street/", "domain": "janestreet.com", "comments": "Example row — add your own with + Add application."}];
+const CONTACTS = [];
+const NAME = "";
+
+const STATUSES=["Interview","Assessment","Accepted","Waiting","To Apply","Verify","Networking","Rejected","Closed"];
+const LOGO_COLORS=["#3b73c9","#7c5cc9","#2a9d8f","#c2549a","#c98a1b","#2e9e6b","#5560c9","#b3574f"];
+const KEY="tracker-simple-v2";
+let data=load(), editIdx=null, statusFilter="", sortKey=null, sortAsc=true;
+
+function load(){try{const s=localStorage.getItem(KEY);if(s)return JSON.parse(s);}catch(e){}return JSON.parse(JSON.stringify(SEED));}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(data));}catch(e){}}
+function toast(m){const t=document.getElementById("toast");t.textContent=m;t.style.display="block";setTimeout(()=>t.style.display="none",2000);}
+function esc(s){return(""+(s||"")).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
+function initials(c){return c.split(/\s+/).map(w=>w[0]).join("").slice(0,2).toUpperCase();}
+function hashColor(c){let h=0;for(const ch of c)h=(h*31+ch.charCodeAt(0))>>>0;return LOGO_COLORS[h%LOGO_COLORS.length];}
+function logoHTML(d){
+  const dom=(d.domain||"").trim();
+  if(!dom)return `<div class="logo" style="--lc:${hashColor(d.company)}">${esc(initials(d.company))}</div>`;
+  return `<div class="logo" style="--lc:${hashColor(d.company)}"><img loading="lazy" src="https://www.google.com/s2/favicons?domain=${encodeURIComponent(dom)}&sz=64" onerror="this.parentNode.textContent='${esc(initials(d.company))}'" alt=""></div>`;
+}
+function statusClass(s){return "b-"+s.replace(/\s/g,"");}
+
+function greet(){
+  const h=new Date().getHours();
+  const hi=h<6?"Late night session":h<12?"Good morning":h<19?"Good afternoon":"Good evening";
+  document.getElementById("greet").textContent=`${hi}${NAME?", "+NAME:""} · ${new Date().toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"long"})}`;
+  const live=data.filter(d=>["Interview","Assessment"].includes(d.status)).length;
+  const wait=data.filter(d=>d.status==="Waiting").length;
+  const lines=[
+    `${live} live process${live===1?"":"es"} and ${wait} waiting — one good follow-up today is enough.`,
+    `${live} live process${live===1?"":"es"} · ${wait} waiting. Keep it simple: apply, follow up, repeat.`,
+    `${live} live process${live===1?"":"es"} · ${wait} waiting. Every rejection is data.`];
+  document.getElementById("subline").textContent=lines[new Date().getDate()%lines.length];
+}
+
+function stats(){
+  const c=s=>data.filter(d=>d.status===s).length;
+  const live=c("Interview")+c("Assessment");
+  document.getElementById("stats").innerHTML=`
+    <div class="stat"><div class="n">${data.length}</div><div class="l">Total</div></div>
+    <div class="stat" style="--c:var(--info)"><div class="n">${live}</div><div class="l">In process</div></div>
+    <div class="stat" style="--c:var(--ok)"><div class="n">${c("Accepted")}</div><div class="l">Accepted</div></div>
+    <div class="stat" style="--c:var(--warn)"><div class="n">${c("Waiting")}</div><div class="l">Waiting</div></div>
+    <div class="stat" style="--c:var(--purple)"><div class="n">${c("To Apply")}</div><div class="l">To apply</div></div>
+    <div class="stat" style="--c:#ff9d55"><div class="n">${c("Verify")}</div><div class="l">To verify</div></div>
+    <div class="stat" style="--c:var(--bad)"><div class="n">${c("Rejected")+c("Closed")}</div><div class="l">Closed</div></div>`;
+}
+
+function chips(){
+  const counts={};data.forEach(d=>counts[d.status]=(counts[d.status]||0)+1);
+  document.getElementById("chips").innerHTML=["",...STATUSES].map(s=>
+    `<span class="chip ${statusFilter===s?'on':''}" onclick="statusFilter='${s}';render()">${s||"All"} <b>${s?(counts[s]||0):data.length}</b></span>`).join("");
+}
+
+function filtered(){
+  const q=document.getElementById("search").value.toLowerCase();
+  const cy=document.getElementById("cycleF").value;
+  let rows=data.map((d,i)=>({...d,_i:i})).filter(d=>
+    (!q||[d.company,d.role,d.location,d.comments,d.status].join(" ").toLowerCase().includes(q))
+    &&(!cy||d.cycle===cy)&&(!statusFilter||d.status===statusFilter));
+  if(sortKey)rows.sort((a,b)=>(""+a[sortKey]).localeCompare(""+b[sortKey])*(sortAsc?1:-1));
+  else rows.sort((a,b)=>b.cycle.localeCompare(a.cycle)||STATUSES.indexOf(a.status)-STATUSES.indexOf(b.status));
+  return rows;
+}
+function sortBy(k){if(sortKey===k)sortAsc=!sortAsc;else{sortKey=k;sortAsc=true;}render();}
+
+function render(){
+  greet();stats();chips();
+  document.getElementById("tbody").innerHTML=filtered().map(d=>`
+   <tr class="row" onclick="openModal(${d._i})">
+    <td><div class="co-cell">${logoHTML(d)}<div><div class="co">${esc(d.company)}</div><div class="role">${esc(d.role)}</div></div></div></td>
+    <td>${esc(d.location)}</td>
+    <td><span class="cycle-tag">${esc(d.cycle)}</span></td>
+    <td><span class="badge ${statusClass(d.status)}">${esc(d.status)}</span></td>
+    <td class="dates">${esc(d.dates)||""}</td>
+    <td>${d.link&&/^https?:/.test(d.link)?`<a class="lk" href="${esc(d.link)}" target="_blank" onclick="event.stopPropagation()">Open ↗</a>`:esc(d.link)||"—"}</td>
+    <td class="cm">${esc(d.comments)}</td>
+   </tr>`).join("");
+  const cs=document.getElementById("contactsSection");
+  if(CONTACTS.length){cs.style.display="block";
+    document.getElementById("contacts").innerHTML=CONTACTS.map(c=>
+     `<div class="card"><div class="nm">${esc(c.name)}</div><div class="rl">${esc(c.role)}</div><div class="st">${esc(c.status)}</div></div>`).join("");
+  }else cs.style.display="none";
+}
+
+const F=["company","role","location","cycle","status","dates","link","domain","comments"];
+function openModal(i){
+  editIdx=(typeof i==="number")?i:null;
+  document.getElementById("mTitle").textContent=editIdx===null?"Add application":"Edit application";
+  document.getElementById("mDelete").style.display=editIdx===null?"none":"inline-block";
+  F.forEach(f=>document.getElementById("f_"+f).value=editIdx===null?(f==="cycle"?"2027":f==="status"?"To Apply":""):data[editIdx][f]||"");
+  document.getElementById("overlay").classList.add("show");
+}
+function closeModal(){document.getElementById("overlay").classList.remove("show");}
+function saveRow(){
+  const row={};F.forEach(f=>row[f]=document.getElementById("f_"+f).value.trim());
+  if(!row.company)return alert("Company required");
+  if(editIdx===null){data.push(row);toast("Application added");}else{data[editIdx]=row;toast("Saved");}
+  save();closeModal();render();
+}
+function deleteRow(){if(confirm("Delete this application?")){data.splice(editIdx,1);save();closeModal();render();toast("Deleted");}}
+
+function stamp(){return new Date().toISOString().slice(0,10);}
+function dl(name,content,type){const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([content],{type}));a.download=name;a.click();}
+function exportJSON(){dl(`applications-${stamp()}.json`,JSON.stringify(data,null,2),"application/json");toast("JSON exported");}
+function exportCSV(){
+  const rows=data.map(d=>F.map(f=>`"${(""+(d[f]||"")).replace(/"/g,'""')}"`).join(","));
+  dl(`applications-${stamp()}.csv`,[F.join(","),...rows].join("\n"),"text/csv");toast("CSV exported");
+}
+function importJSON(ev){
+  const f=ev.target.files[0];if(!f)return;
+  const r=new FileReader();
+  r.onload=()=>{try{const j=JSON.parse(r.result);if(Array.isArray(j)){data=j;save();render();toast("Imported");}else alert("Invalid file");}catch(e){alert("Invalid JSON");}};
+  r.readAsText(f);ev.target.value="";
+}
+function resetData(){if(confirm("Reset to original data? Your edits will be lost.")){data=JSON.parse(JSON.stringify(SEED));save();render();toast("Reset done");}}
+
+render();
+</script>
+</body>
+</html>
