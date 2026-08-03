@@ -4,7 +4,7 @@ A single-file internship application tracker. One HTML file — no build step, n
 
 Built for finance, quant and consulting recruiting, where you're running 30+ applications across cycles and portals and losing track of which ones are actually live.
 
-**[→ Live demo](https://capoheladero.github.io/internships-tracker/)**
+**[→ Live demo](https://cristianrebo.github.io/internships-tracker/)**
 
 ---
 
