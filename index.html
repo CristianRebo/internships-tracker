@@ -63,6 +63,12 @@ a.lk:hover{text-decoration:underline}
 .cm{color:var(--muted);font-size:12px;max-width:260px}
 .dates{font-size:12px;color:var(--warn);font-weight:600}
 .section-t{font-size:16px;font-weight:700;margin:26px 0 12px}
+.log{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:4px 0;max-height:420px;overflow-y:auto}
+.log-e{display:flex;gap:12px;padding:9px 14px;border-bottom:1px solid var(--border);font-size:12.5px}
+.log-e:last-child{border-bottom:none}
+.log-d{color:var(--green);font-weight:700;white-space:nowrap;min-width:78px}
+.log-t{color:var(--muted);line-height:1.5}
+.log-t b{color:var(--text);font-weight:600}
 .contacts{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:12px}
 .card{background:var(--card);border:1px solid var(--border);border-left:3px solid var(--green);border-radius:10px;padding:13px}
 .card .nm{font-weight:700}.card .rl{color:#6fd3a5;font-size:12px;margin:2px 0}.card .st{font-size:12px;color:var(--muted);line-height:1.5}
@@ -123,6 +129,11 @@ a.lk:hover{text-decoration:underline}
 </table>
 </div>
 
+<div id="logSection">
+  <div class="section-t">Change log</div>
+  <div class="log" id="log"></div>
+</div>
+
 <div id="contactsSection">
   <div class="section-t">Contacts &amp; referrals</div>
   <div class="contacts" id="contacts"></div>
@@ -163,6 +174,8 @@ a.lk:hover{text-decoration:underline}
 const SEED = [{"company": "Goldman Sachs", "role": "Summer Analyst — Global Markets", "location": "London", "cycle": "2027", "status": "Waiting", "dates": "Applied 10 Jul", "link": "https://www.goldmansachs.com/careers/", "domain": "goldmansachs.com", "comments": "Example row — click to edit or delete."}, {"company": "McKinsey & Company", "role": "Summer Business Analyst", "location": "Madrid", "cycle": "2027", "status": "Assessment", "dates": "OA by 30 Jul", "link": "https://www.mckinsey.com/careers", "domain": "mckinsey.com", "comments": "Example row."}, {"company": "Jane Street", "role": "Quant Trading Internship", "location": "London", "cycle": "2027", "status": "To Apply", "dates": "", "link": "https://www.janestreet.com/join-jane-street/", "domain": "janestreet.com", "comments": "Example row — add your own with + Add application."}];
 const CONTACTS = [];
 const NAME = "";
+const CHANGELOG = [];
+const LOGKEY = "tracker-log-v1";
 
 const STATUSES=["Interview","Assessment","Accepted","Waiting","To Apply","Verify","Networking","Rejected","Closed"];
 const LOGO_COLORS=["#3b73c9","#7c5cc9","#2a9d8f","#c2549a","#c98a1b","#2e9e6b","#5560c9","#b3574f"];
@@ -226,8 +239,16 @@ function filtered(){
 }
 function sortBy(k){if(sortKey===k)sortAsc=!sortAsc;else{sortKey=k;sortAsc=true;}render();}
 
+function renderLog(){
+  let L=CHANGELOG; try{const s=localStorage.getItem(LOGKEY); if(s)L=JSON.parse(s);}catch(e){}
+  const el=document.getElementById("logSection");
+  if(!L||!L.length){el.style.display="none";return;}
+  el.style.display="block";
+  document.getElementById("log").innerHTML=L.map(e=>
+    `<div class="log-e"><div class="log-d">${esc(e.date)}</div><div class="log-t">${esc(e.text).replace(/\*\*(.+?)\*\*/g,"<b>$1</b>")}</div></div>`).join("");
+}
 function render(){
-  greet();stats();chips();
+  greet();stats();chips();renderLog();
   document.getElementById("tbody").innerHTML=filtered().map(d=>`
    <tr class="row" onclick="openModal(${d._i})">
     <td><div class="co-cell">${logoHTML(d)}<div><div class="co">${esc(d.company)}</div><div class="role">${esc(d.role)}</div></div></div></td>
