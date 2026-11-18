@@ -1,0 +1,10 @@
+# personal data — never commit
+my-tracker.html
+my-applications.json
+build_tracker.py
+tracker-skeleton.html
+tracker-template.html
+internship-tracker.html
+applications-*.json
+applications-*.csv
+.DS_Store
